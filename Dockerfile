@@ -1,21 +1,20 @@
-# Stage 1: Build application with Maven and JDK 21
-FROM eclipse-temurin:21-jdk-alpine AS builder
+# Stage 1: Build application with pre-installed Maven and JDK 21
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
 WORKDIR /app
 
-# Cache dependencies
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
-RUN chmod +x mvnw && ./mvnw dependency:go-offline -B || true
+# Cache Maven dependencies
+COPY pom.xml ./
+RUN mvn dependency:go-offline -B || true
 
-# Build production jar
-COPY src/ src/
-RUN ./mvnw clean package -DskipTests
+# Copy source code and build jar
+COPY src/ ./src/
+RUN mvn clean package -DskipTests
 
-# Stage 2: Lean JRE 21 runtime
+# Stage 2: Minimal, secure JRE 21 runtime
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Non-root user for security
+# Run as non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
