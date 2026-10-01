@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talk Flow — Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0c0e14;
+            --bg-card: #141722;
+            --bg-input: #0f121a;
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-high: #f8fafc;
+            --text-medium: #94a3b8;
+            --text-muted: #64748b;
+            --radius-md: 10px;
+            --radius-full: 9999px;
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-dark);
+            color: var(--text-high);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 36px 32px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 26px;
+        }
+
+        .brand-avatar-ring {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #ffffff;
+            margin: 0 auto 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-avatar-inner {
+            font-weight: 800;
+            font-size: 18px;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        .auth-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--text-high);
+            margin-bottom: 4px;
+        }
+
+        .auth-header p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .alert-banner {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 500;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-banner.error {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #fca5a5;
+        }
+
+        .alert-banner.info {
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: #93c5fd;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-medium);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-high);
+            font-family: inherit;
+            font-size: 13.5px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 11px;
+            margin-top: 8px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-hover);
+        }
+
+        .auth-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12.5px;
+            color: var(--text-muted);
+        }
+
+        .auth-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="brand-avatar-ring">
+                    <div class="brand-avatar-inner">TF</div>
+                </div>
+                <h1>Welcome to Talk Flow</h1>
+                <p>Join conversations & live channels</p>
+            </div>
+
+            <!-- Error Notification -->
+            <div th:if="${param.error}" class="alert-banner error">
+                <span>Invalid email or password. Please try again.</span>
+            </div>
+
+            <!-- Logout Notification -->
+            <div th:if="${param.logout}" class="alert-banner info">
+                <span>You have signed out of Talk Flow safely.</span>
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <label for="username">Email Address</label>
+                    <input type="email" class="form-input" id="username" name="username"
+                           placeholder="alex@team.io" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-input" id="password" name="password"
+                           placeholder="••••••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-submit" id="login-submit">Join Talk Flow</button>
+            </form>
+
+            <div class="auth-footer">
+                <span>New to Talk Flow? <a th:href="@{/registration}" class="auth-link">Create Account</a></span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
